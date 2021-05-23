@@ -1,8 +1,7 @@
-﻿using UnityEngine;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 /*
  TO-DO
     * FUNCIONES
@@ -18,17 +17,20 @@ public class Player : MonoBehaviour
     private int totalScore = 0; // Almacena el total de puntos
     private int[] scoreBoard; // Almacena la puntuación de cada ronda
     //private User user = null; // Almacena el usuario elegido para jugar (Aun sin utilidad)
-    private string pseudonym = "Anónimo"; // Nombre que usará el jugador
+    private string name = "Anónimo"; // Nombre que usará el jugador
+    private string nick = "ANY"; // Abreviación que usará el jugador
     private Color color = Color.black;  // Color identificativo del jugador
 
     /// <summary>
     /// Contructor base de Player. Instancia un jugador.
     /// </summary>
-    /// <param name="pseudonym">Seudonimo del jugador.</param>
+    /// <param name="name">Nombre del jugador.</param>
+    /// <param name="nick">Abreviación del jugador.</param>
     /// <param name="color">Color representativo del jugador.</param>
-    public Player(string pseudonym, Color color)
+    public Player(string name, string nick, Color color)
     {
-        this.pseudonym = pseudonym;
+        this.name = name;
+        this.nick = nick.ToUpper();
         this.color = color;
         //Inicializacion
         Array.ForEach(scoreBoard, delegate (int n)
@@ -41,8 +43,8 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Sobrecarga de Player(string pseudonym, Color color).
     /// </summary>
-    /// <param name="pseudonym">Seudonimo del jugador.</param>
-    public Player(string pseudonym) : this(pseudonym, Color.blue) { }
+    /// <param name="name">Nombre del jugador.</param>
+    public Player(string name) : this(name, name.Length > 3 ? name.Substring(0,3) : name, Color.blue) { }
 
     void Start()
     {
@@ -66,9 +68,13 @@ public class Player : MonoBehaviour
     public void addScoreRound(int score, int round)
     {
         if (round < scoreBoard.Length)
+        {
             scoreBoard[round] = score;
+        }
         else
+        {
             throw new IndexOutOfRangeException("La ronda " + round + " supera la maxima ronda.");
+        }
 
         this.totalScore = scoreBoard.Sum(); //Actualiza el totalScore con un sumatorio del scoreBoardd
     }
@@ -78,22 +84,37 @@ public class Player : MonoBehaviour
     /// Getter de la puntuacion total.
     /// </summary>
     /// <returns>Integer. Puntuacion total.</returns>
-    public int getScore() => this.totalScore;
+    public int getScore()
+    {
+        return this.totalScore;
+    }
+
     /// <summary>
     /// Setter de la puntuacion total.
     /// </summary>
     /// <param name="score">Puntuacion total.</param>
-    public void setScore(int score) => this.totalScore = score;
+    public void setScore(int score)
+    {
+        this.totalScore = score;
+    }
+
     /// <summary>
     /// Getter de la tabla de puntuaciones.
     /// </summary>
     /// <returns>Integer. Puntuacion total.</returns>
-    public int[] getScoreBoard() => this.scoreBoard;
+    public int[] getScoreBoard()
+    {
+        return this.scoreBoard;
+    }
+
     /// <summary>
     /// Setter de la tabla de puntuaciones.
     /// </summary>
     /// <param name="scoreBoard">Tabla de puntuaciones.</param>
-    public void setScoreBoard(int[] scoreBoard) => this.scoreBoard = scoreBoard;
+    public void setScoreBoard(int[] scoreBoard)
+    {
+        this.scoreBoard = scoreBoard;
+    }
 
     //Getter y Setter de la variable user
     /*public User getUser()
@@ -110,22 +131,37 @@ public class Player : MonoBehaviour
     /// Getter del seudonimo.
     /// </summary>
     /// <returns>string. Seudonimo</returns>
-    public string getPseudonym() => this.pseudonym;
+    public string getPseudonym()
+    {
+        return this.name;
+    }
+
     /// <summary>
     /// Setter del seudonimo del jugador.
     /// </summary>
     /// <param name="pseudonym">Seudonimo del jugador</param>
-    public void setPseudonym(string pseudonym) => this.pseudonym = pseudonym;
+    public void setPseudonym(string pseudonym)
+    {
+        this.name = pseudonym;
+    }
+
     /// <summary>
     /// Getter de la variable color.
     /// </summary>
     /// <returns>Color. Color del jugador</returns>
-    public Color getColor() => this.color;
+    public Color getColor()
+    {
+        return this.color;
+    }
+
     /// <summary>
     /// Setter del color del jugador.
     /// </summary>
     /// <param name="color">Color del jugador.</param>
-    public void setColor(Color color) => this.color = color;
+    public void setColor(Color color)
+    {
+        this.color = color;
+    }
 
     // Funciones basicas
 }

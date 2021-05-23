@@ -1,7 +1,8 @@
-using System;
 using System.Collections.Generic;
-using PlayerNamespace;
-class Game
+using UnityEngine;
+using UnityEngine.UI;
+using Assets.Scipts;
+class Game : MonoBehaviour
 {
     /*
     TO-DO
@@ -10,56 +11,69 @@ class Game
             nexo entre estos por si hay que hacer alguna operacion que implique a ambos.
         -
     */
-    public const int FINISHMODE_ROUNDS = 0, FINISHMODE_TIME = 1, FINISHMODE_POINTS = 2;
-    private int numPlayers, limitRounds, limitTime, limitPoints, finishMode,
-        currentRound, currentTime, currentPoints;
+    public InputField inputName, inputNumRounds, inputNumPlayers;
+    public GameObject playerForm;
+    public Button submitButton;
+
+    private int numPlayers, numRounds, currentRound;
     private List<Player> players;
+    private string gameName;
     // Constructores
     // Resumen:
     //  Al constructor se le pasa la forma de finalizar el juego pasando como argumento
     //      FINISH_MODE una de las constantes FINISHMODE
-    public Game(int numPlayers, int limit, int FINISH_MODE)
+    public Game(string name, int numPlayers, int limit)
     {
+        this.gameName = name;
         this.numPlayers = numPlayers;
-        this.finishMode = FINISH_MODE;
-        players = new List<Player>();
-
-        switch (FINISH_MODE)
-        {
-            case FINISHMODE_TIME:
-                this.limitTime = limit;
-                break;
-            case FINISHMODE_ROUNDS:
-                this.limitRounds = limit;
-                break;
-            case FINISHMODE_POINTS:
-            default:
-                this.limitPoints = limit;
-                break;
-        }
+        this.players = new List<Player>();
     }
 
+    public Game(string serializableGame) //Creacion de un juego mediante una cadena JSON
+    {
+
+    }
+
+    public Game() : this("New Game", 1, 7) { }
+
     // Metodos
+    public void Start()
+    {
+        submitButton.onClick.AddListener(newGame);
+        Debug.Log("Iniciado el juego");
+    }
     public void newGame()
     {
-        switch (finishMode)
-        {
-            case FINISHMODE_TIME:
-                currentTime = limitTime;
-                break;
-            case FINISHMODE_ROUNDS:
-                currentRound = 0;
-                break;
-            case FINISHMODE_POINTS:
-                currentPoints = 0;
-            //Posible cambio: No hacer copia de la lista de jugadores y asi la pantalla se iria actualizando ordenando los jugadores por puntos
-                /* Actualizacion del orden de jugadores por puntuaciones
-                var ordererPlayers = new List<Player>(players); //Se hace una copia de la lista de jugadores para no afectar al orden original
-                ordererPlayers.Sort(new PlayerPointsComparator()); //Ordena los jugadores por puntos
-                this.currentPoints = ordererPlayers[0].getScore();//Se guarda la mayor puntuación
-                */
-                break;
-        }
+        /*this.name = inputName.text;
+        this.numRounds = int.Parse(inputNumRounds.text);
+        this.numPlayers = int.Parse(inputNumPlayers.text);*/
+
+        InputField[] ips = playerForm.transform.GetComponentsInChildren<InputField>();
+        ColorPicker cp = playerForm.transform.GetComponentInChildren<ColorPicker>();
+        //Player p = new Player();    
+
+        currentRound = 0;
+
+        //saveGameToJSON();
+        //Posible cambio: No hacer copia de la lista de jugadores y asi la pantalla se iria actualizando ordenando los jugadores por puntos
+        /* Actualizacion del orden de jugadores por puntuaciones
+        var ordererPlayers = new List<Player>(players); //Se hace una copia de la lista de jugadores para no afectar al orden original
+        ordererPlayers.Sort(new PlayerPointsComparator()); //Ordena los jugadores por puntos
+        this.currentPoints = ordererPlayers[0].getScore();//Se guarda la mayor puntuación
+        */
+    }
+
+    public void saveGameToJSON()
+    {
+        SerializableGame sGame = new SerializableGame();
+
+        sGame.name = this.gameName;
+        sGame.numPlayers = this.numPlayers;
+        sGame.numRounds = this.numRounds;
+        sGame.setPlayers(this.players.ToArray());
+
+        string jsonGame = JsonUtility.ToJson(sGame);
+        Debug.Log(jsonGame);
     }
 
     public void addPlayer(Player player)
@@ -81,41 +95,11 @@ class Game
 
     public int getLimitRounds()
     {
-        return this.limitRounds;
+        return this.numRounds;
     }
 
     public void setLimitRounds(int limitRounds)
     {
-        this.limitRounds = limitRounds;
-    }
-
-    public int getLimitTime()
-    {
-        return this.limitTime;
-    }
-
-    public void setLimitTime(int limitTime)
-    {
-        this.limitTime = limitTime;
-    }
-
-    public int getLimitPoints()
-    {
-        return this.limitPoints;
-    }
-
-    public void setLimitPoints(int limitPoints)
-    {
-        this.limitPoints = limitPoints;
-    }
-
-    public int getfinishMode()
-    {
-        return this.finishMode;
-    }
-
-    public void setfinishMode(int finishMode)
-    {
-        this.finishMode = finishMode;
+        this.numRounds = limitRounds;
     }
 }
