@@ -12,14 +12,18 @@ Se ha añadido un selector de color a la escena de creacion de partida.
 - Varios cambios esteticos.
 - Se ha añadido el objeto Game.
 - Al pulsar "Crear partida" se recoje la información del formulario y se crea el juego. (Sin terminar).
-- El objeto Game y Player son selializables y existen los metodos para transformar un juego a JSON.
+- El objeto Game y Player son serializables y existen los metodos para transformar un juego a JSON.
+
+	AppPuntos-v2021.5.24
+
+- Al cambiar el numero de jugadores se instancian o se destruyen los formularios de jugadores.
+- Se ha eliminado el FlexibleColorPicker para seleccionar el color ya que no es practico.
 
 TO-DO
 
 - Terminar la recolección de datos del formulario para la creacion del juego.
 - Completar el constructor de Game que permite crear un juego deserializando un JSON para asi poder guardarlo
-   en un archivo externo y cargarlo para poder saltarse la creacion manual del juego.
-- Al darle a una partida guardada, se carga el JSON correspondiente, se instancia el juego y se pasa directamente
+   en un archivo externo y cargarlo para poder saltarse la creacion manual del juego (Funcion loadGameFromJSON).
+- En la pantalla principal, al darle a una partida guardada, se carga el JSON correspondiente, se instancia el juego y se pasa directamente
    a la escena de juego.
-- Escena Creacion de partida: La segunda barra horizontal y el rectangulo que muestra la seleccion de color del jugador
-   no se oculta al desplazarse.
+- Seleccion de color entre unos pocos escogidos.

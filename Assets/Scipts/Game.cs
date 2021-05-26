@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Assets.Scipts;
+using System.Linq;
 class Game : MonoBehaviour
 {
     /*
@@ -12,11 +13,14 @@ class Game : MonoBehaviour
         -
     */
     public InputField inputName, inputNumRounds, inputNumPlayers;
-    public GameObject playerForm;
+    public GameObject playerFormPrefab, playerForm, anchorPlayerForms;
     public Button submitButton;
 
-    private int numPlayers, numRounds, currentRound;
+    private int numPlayers = 1, //NumPlayers debe ser al menos 1
+                antNumPlayers = 0, //NumPlayers al inicio de la escena
+        numRounds, currentRound; 
     private List<Player> players;
+    private List<GameObject> formPlayers = new List<GameObject>();
     private string gameName;
     // Constructores
     // Resumen:
@@ -41,15 +45,55 @@ class Game : MonoBehaviour
     {
         submitButton.onClick.AddListener(newGame);
         Debug.Log("Iniciado el juego");
+
+        foreach (Transform child in playerForm.transform)
+        {
+            if (child.tag == "Player")
+            {
+                formPlayers.Add(child.gameObject);
+                Debug.Log("Añadido child a players");
+            }
+        }
     }
+
+    public void Update()
+    {
+        //Revisión del numero de jugadores
+        if (antNumPlayers != numPlayers)
+        {
+            if (antNumPlayers < numPlayers)
+            {
+                int index = antNumPlayers;
+                //Se añade un nuevo formulario de jugador vacio
+                int interForm = 0; //Espacio entre formularios
+                GameObject f = Instantiate(playerFormPrefab, anchorPlayerForms.transform.localPosition - new Vector3(0, index * playerFormPrefab.GetComponent<RectTransform>().rect.height + interForm, 0), Quaternion.identity); //Instanciacion del formulario
+                f.transform.SetParent(playerForm.transform, false); //Establecer el formulario del jugador como hijo del formulario de cracion de partida
+                f.transform.localScale = new Vector3(1, 1, 1); //Cambio de escala
+                formPlayers.Add(f); //Se añade a la lista de formularios
+                antNumPlayers = formPlayers.Count(); //Se actualiza el numero de formularios en pantalla
+            }
+            else if (antNumPlayers > numPlayers)
+            {
+                int index = antNumPlayers - 1;
+                //Se elimina el ultimo formulario de jugador
+                Destroy(formPlayers[index]);
+                formPlayers.Remove(formPlayers[index]);
+                antNumPlayers = formPlayers.Count();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Recolecta los datos del formulario y guarda los datos en Configuracion.
+    /// </summary>
     public void newGame()
     {
         /*this.name = inputName.text;
         this.numRounds = int.Parse(inputNumRounds.text);
         this.numPlayers = int.Parse(inputNumPlayers.text);*/
 
-        InputField[] ips = playerForm.transform.GetComponentsInChildren<InputField>();
-        ColorPicker cp = playerForm.transform.GetComponentInChildren<ColorPicker>();
+        InputField[] ips = playerFormPrefab.transform.GetComponentsInChildren<InputField>();
+        ColorPicker cp = playerFormPrefab.transform.GetComponentInChildren<ColorPicker>();
         //Player p = new Player();    
 
         currentRound = 0;
@@ -63,6 +107,9 @@ class Game : MonoBehaviour
         */
     }
 
+    /// <summary>
+    /// Guarda la plantilla de la partida como JSON en un archivo externo para poder recuperarlo mas tarde con la funcion loadGameFromJSON.
+    /// </summary>
     public void saveGameToJSON()
     {
         SerializableGame sGame = new SerializableGame();
@@ -76,10 +123,18 @@ class Game : MonoBehaviour
         Debug.Log(jsonGame);
     }
 
+    /// <summary>
+    /// (TO-DO) Carga una plantilla de partida a partir de un JSON almacenado en un archivo externo.
+    /// </summary>
+    /// <param name="id">Ruta o identificador para seleccionar la partida a cargar</param>
+    public void loadGameFronJSON(string id)
+    {
+
+    }
+
     public void addPlayer(Player player)
     {
-        if (!players.Contains(player))
-            players.Add(player);
+        players.Add(player);
     }
 
     // Getters and setters

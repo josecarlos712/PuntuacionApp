@@ -6,13 +6,15 @@ public class ChangeNumPlayers : MonoBehaviour
     public Button buttonPlayers;
     public InputField inputNumPlayers;
     public int MODE;
+    public GameObject game;
 
     public static int UPPLAYERS = 0, DOWNPLAYERS = 1;
+    public static int MAXNUMPLAYERS = 8;
 
     // Start is called before the first frame update
     void Start()
     {
-        if(MODE == 0)
+        if (MODE == 0)
         {
             gameObject.GetComponent<Button>().onClick.AddListener(upplayers);
         }
@@ -21,50 +23,51 @@ public class ChangeNumPlayers : MonoBehaviour
             gameObject.GetComponent<Button>().onClick.AddListener(downplayers);
         }
 
-        inputNumPlayers.text = Configuration.game.getNumPlayers().ToString();
+        inputNumPlayers.text = game.GetComponent<Game>().getNumPlayers().ToString();
         inputNumPlayers.gameObject.GetComponent<InputField>().onEndEdit.AddListener(editPlayerNumber);
     }
 
     private void editPlayerNumber(string inputPlayerNumberText)
     {
         int num = int.Parse(inputPlayerNumberText);
-        if (num > 0 && num <= 10)
+        if (num > 0 && num <= MAXNUMPLAYERS)
         {
-            Configuration.game.setNumPlayers(num);
+            game.GetComponent<Game>().setNumPlayers(num);
         }
 
-        Debug.Log("EditPlayers: " + Configuration.game.getNumPlayers());
+        Debug.Log("EditPlayers: " + game.GetComponent<Game>().getNumPlayers());
     }
 
     private void upplayers()
     {
-        int nPlayers = Configuration.game.getNumPlayers();
+        int nPlayers = game.GetComponent<Game>().getNumPlayers();
 
-        if (nPlayers < 10)
+        if (nPlayers < MAXNUMPLAYERS)
         {
-            Configuration.game.setNumPlayers(nPlayers + 1);
-            inputNumPlayers.text = Configuration.game.getNumPlayers().ToString();
-        } else
-        {
-            Configuration.game.setNumPlayers(10);
-            inputNumPlayers.text = Configuration.game.getNumPlayers().ToString();
-        }
-        Debug.Log("UPPLAYERS: " + Configuration.game.getNumPlayers());
-    }
-    private void downplayers()
-    {
-        int nPlayers = Configuration.game.getNumPlayers();
-
-        if (nPlayers > 1)
-        {
-            Configuration.game.setNumPlayers(nPlayers-1);
-            inputNumPlayers.text = Configuration.game.getNumPlayers().ToString();
+            game.GetComponent<Game>().setNumPlayers(nPlayers + 1);
+            inputNumPlayers.text = game.GetComponent<Game>().getNumPlayers().ToString();
         }
         else
         {
-            Configuration.game.setNumPlayers(1);
-            inputNumPlayers.text = Configuration.game.getNumPlayers().ToString();
+            game.GetComponent<Game>().setNumPlayers(10);
+            inputNumPlayers.text = game.GetComponent<Game>().getNumPlayers().ToString();
         }
-        Debug.Log("DOWNPLAYERS: " + Configuration.game.getNumPlayers());
+        //Debug.Log("UPPLAYERS: " + game.GetComponent<Game>().getNumPlayers());
+    }
+    private void downplayers()
+    {
+        int nPlayers = game.GetComponent<Game>().getNumPlayers();
+
+        if (nPlayers > 1)
+        {
+            game.GetComponent<Game>().setNumPlayers(nPlayers - 1);
+            inputNumPlayers.text = game.GetComponent<Game>().getNumPlayers().ToString();
+        }
+        else
+        {
+            game.GetComponent<Game>().setNumPlayers(1);
+            inputNumPlayers.text = game.GetComponent<Game>().getNumPlayers().ToString();
+        }
+        //Debug.Log("DOWNPLAYERS: " + game.GetComponent<Game>().getNumPlayers());
     }
 }
